@@ -32,6 +32,10 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 app.post("/register", async (req, res) => {
   const { username, password, email } = req.body;
   try {
