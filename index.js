@@ -94,8 +94,8 @@ app.post("/google-sign-in", async (req, res) => {
 
     const payload = ticket.getPayload();
     const userid = payload["sub"];
+    const username = payload["name"] || payload["email"].split("@")[0];
 
-    let username = payload["email"].split("@")[0];
     let user = await User.findOne({ googleId: userid });
     if (!user) {
       user = new User({
@@ -110,7 +110,10 @@ app.post("/google-sign-in", async (req, res) => {
       { _id: user._id, username: user.username },
       process.env.SECRET_KEY,
     );
-    res.json({ token: token, username: user.username });
+    res.json({
+      token: token,
+      username: user.username,
+    });
   } catch (error) {
     console.error("Error during Google sign-in:", error);
     res.status(500).send("An error occurred during Google sign-in.");
@@ -269,7 +272,7 @@ app.get("/api/storyEntries", async (req, res) => {
   res.json(hardcodedStories);
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.BACKEND_PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
